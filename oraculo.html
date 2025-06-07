@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oráculo do Templo Interno 🔮</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Zen Maru Gothic', sans-serif;
+      background-color: #1a1a1a;
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    input,
+    button {
+      font-size: 1rem;
+      padding: 0.5rem;
+      margin: 0.5rem;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+    }
+    input {
+      width: 250px;
+      max-width: 80vw;
+    }
+    button {
+      cursor: pointer;
+      background-color: #3a3a3a;
+      color: #eee;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    .frase {
+      margin-top: 2rem;
+      font-size: 1.5rem;
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.4;
+      user-select: text;
+    }
+  </style>
+</head>
+<body>
+  <h1>Oráculo do Templo Interno 🔮</h1>
+  <input type="text" id="entrada" placeholder="Digite uma sensação ou sentimento..." />
+  <button onclick="consultarOraculo()">Consultar</button>
+  <div class="frase" id="fraseResultado"></div>
+
+  <script>
+    const baseFrases = {
+      // Sentimentos
+      amor: [
+        "O amor é o fogo que aquece as noites frias. ❤️",
+        "Quando o amor guia, o caos se curva. 🔥",
+        "O amor verdadeiro não prende, ele liberta. 🕊️",
+      ],
+      alegria: [
+        "A alegria é a dança espontânea da alma. 💃",
+        "Nos olhos que brilham, mora o agora. ✨",
+        "Alegria é quando o espírito se espreguiça. 🌞",
+      ],
+      gratidao: [
+        "A gratidão transforma o vazio em plenitude. 🙏",
+        "Cada gesto de gratidão é uma semente de luz. 🌱",
+        "Ser grato é dançar com o presente. 🎶",
+      ],
+      confianca: [
+        "A confiança é o chão firme sob os pés do invisível. 🛤️",
+        "Quando confio, solto e voo. 🕊️",
+        "A confiança é a raiz da liberdade. 🌳",
+      ],
+      admiracao: [
+        "Admirar é permitir-se tocar pelo brilho do outro. 🌟",
+        "Na admiração, nasce a inspiração. ✨",
+        "Admirar é ver o mundo com olhos de poesia. 🎨",
+      ],
+      afeicao: [
+        "A afeição mora nos gestos pequenos e nas presenças constantes. 🫶",
+        "Onde há afeição, o tempo caminha mais leve. 🕰️",
+        "A afeição constrói laços invisíveis. 🧵",
+      ],
+      serenidade: [
+        "A serenidade é o rio calmo que corre por dentro. 🌊",
+        "Em meio ao caos, a serenidade sussurra. 🌬️",
+        "Ser sereno é dançar com o tempo sem pressa. 🐢",
+      ],
+      empatia: [
+        "Empatia é tocar o coração do outro sem invadir. 💞",
+        "Compreender é se colocar sem se perder. 🤝",
+        "Empatia é linguagem silenciosa da alma. 🔇",
+      ],
+      coragem: [
+        "Coragem não é ausência de medo, é ação apesar dele. 🦁",
+        "A coragem acende luzes no escuro. 🔦",
+        "Onde há coragem, há caminho. 🛤️",
+      ],
+      paz: [
+        "A paz é o silêncio que canta. 🕊️",
+        "Na paz, tudo respira em compasso. 🌿",
+        "Paz é quando a alma repousa sem medo. 🌙",
+      ],
+      entusiasmo: [
+        "O entusiasmo é a faísca divina em movimento. ⚡",
+        "Quando entusiasmado, o tempo corre leve. ⏳",
+        "Entusiasmo é sopro de alma em ação. 🌬️",
+      ],
+      esperanca: [
+        "A esperança é uma vela acesa na escuridão. 🕯️",
+        "Mesmo no fim, a esperança recomeça. 🌱",
+        "Esperar com fé é cultivar o invisível. ✨",
+      ],
+      determinacao: [
+        "A determinação é a bússola da vontade. 🧭",
+        "Quem se determina, traça destino. 🛤️",
+        "Determinação é o eco do propósito. 🔊",
+      ],
+      compaixao: [
+        "Compaixão é acolher o mundo com olhos brandos. 👁️‍🗨️",
+        "A dor compartilhada se faz mais leve. 🫂",
+        "Compaixão é cura sem palavras. 🌸",
+      ],
+      liberdade: [
+        "Ser livre é voar mesmo com o vento contrário. 🕊️",
+        "A liberdade dança sem moldura. 💃",
+        "Onde há liberdade, há verdade. 🪞",
+      ],
+      inspiracao: [
+        "A inspiração sopra quando o silêncio escuta. 🌬️",
+        "Ideias nascem do espanto que acolhemos. 💡",
+        "Inspirar é permitir-se ser vaso do invisível. 🌌",
+      ],
+      felicidade: [
+        "Felicidade é um estado de presença em festa. 🎉",
+        "Ela mora nas entrelinhas do agora. 🕰️",
+        "Felicidade é alma em paz com o momento. 🌻",
+      ],
+
+      // Sensações
+      frio: [
+        "O frio traz a clareza do silêncio gelado. ❄️",
+        "Na pele fria, o mundo se recolhe em calma. 🧊",
+        "O frio desperta o aconchego escondido. 🧣",
+      ],
+      calor: [
+        "O calor é o abraço do sol na pele. ☀️",
+        "No calor, o coração se expande em fogo. 🔥",
+        "Calor é a dança do sangue e do tempo. 🌡️",
+      ],
+      leveza: [
+        "A leveza é o voo suave da alma em liberdade. 🕊️",
+        "Ser leve é flutuar sobre as dores. 🌬️",
+        "Leveza é a risada que escapa sem peso. 🎈",
+      ],
+      peso: [
+        "O peso é a âncora que traz a força do chão. ⚓",
+        "Sentir o peso é reconhecer a existência. 🪨",
+        "O peso modela a forma da alma. 🏋️",
+      ],
+      toque: [
+        "O toque é a ponte entre dois mundos invisíveis. 🤲",
+        "No toque, as almas se reconhecem sem palavras. ✋",
+        "Toque é o silêncio que se torna presença. 👐",
+      ],
+      silêncio: [
+        "No silêncio, a alma fala em segredo. 🤫",
+        "O silêncio é o espaço onde tudo nasce. 🌑",
+        "Silêncio é o repouso antes da tempestade. 🌫️",
+      ],
+      som: [
+        "O som é a vibração que anima o invisível. 🎶",
+        "Em cada som, um universo desperta. 🔔",
+        "O som é a voz do silêncio transformada. 🎵",
+      ],
+      luz: [
+        "A luz revela o que o escuro oculta. 💡",
+        "Na luz, a verdade dança sem máscaras. 🔆",
+        "Luz é o caminho que o coração escolhe. ✨",
+      ],
+      sombra: [
+        "A sombra é a lembrança do que fomos. 🌑",
+        "Na sombra, a alma se recolhe para renascer. 🌘",
+        "Sombra é a dança do silêncio com a luz. 🌒",
+      ],
+      calorhumano: [
+        "O calor humano é o fogo que não queima, mas acolhe. 🤗",
+        "No calor humano, o coração encontra morada. 🫂",
+        "Calor humano é a chama da solidariedade. 🔥",
+      ],
+      sabor: [
+        "O sabor é a memória do instante que vive. 🍯",
+        "Cada sabor conta histórias que o tempo esqueceu. 🍋",
+        "No sabor, o mundo se revela em detalhes. 🍓",
+      ],
+      cheiro: [
+        "O cheiro é a alma do lugar que tocamos. 🌹",
+        "A memória do cheiro nunca se apaga. 🍂",
+        "Cheiro é o perfume da vida que insiste em ficar. 🌸",
+      ],
+      textura: [
+        "A textura conta segredos que o olhar não alcança. 🪵",
+        "No toque da textura, o tempo se eterniza. 🧵",
+        "Textura é a poesia do contato. 🌿",
+      ],
+      vibração: [
+        "A vibração é a música que anima a matéria. 🎸",
+        "No pulsar da vibração, a vida se manifesta. 🔥",
+        "Vibração é o coração do universo batendo. 🌌",
+      ],
+      pressão: [
+        "A pressão revela a resistência do ser. ⚙️",
+        "Sob pressão, nascem as verdadeiras forças. 💪",
+        "Pressão é a prova do que somos capazes. 🛡️",
+      ],
+      expansão: [
+        "A expansão é o caminho do infinito dentro de nós. 🌠",
+        "Expandir é abrir espaço para o novo nascer. 🌱",
+        "Na expansão, o espírito se encontra vasto. 🌍",
+      ],
+      contração: [
+        "A contração é o recolher que prepara a transformação. 🐚",
+        "No apertar, a alma se fortalece. 🌿",
+        "Contração é silêncio que antecipa o grito. 🌑",
+      ],
+      calmaria: [
+        "A calmaria é o mar que sussurra segredos antigos. 🌊",
+        "Em calmaria, o tempo se aquieta. 🕊️",
+        "Calmaria é a paz que repousa no horizonte. 🌅",
+      ],
+      ansiedade: [
+        "A ansiedade é o vento inquieto que chama por atenção. 🌪️",
+        "Na ansiedade, o coração bate ritmos desconhecidos. 💓",
+        "Ansiedade é a alma procurando o caminho de volta. 🌫️",
+      ],
+      esperança: [
+        "Esperança é a vela acesa em noite escura. 🕯️",
+        "Na esperança, o impossível se torna convite. 🌈",
+        "Esperança é o sorriso que nunca se apaga. 😊",
+      ],
+      melancolia: [
+        "Melancolia é a chuva que lava a alma. 🌧️",
+        "No silêncio da melancolia, brotam verdades. 🌿",
+        "Melancolia é a cor suave da saudade. 🎨",
+      ],
+      admiração: [
+        "Admiração é ver o mundo com olhos de criança. 👁️",
+        "No espanto da admiração, nasce a poesia. ✨",
+        "Admirar é abrir o coração para o novo. 🌟",
+      ],
+      ternura: [
+        "Ternura é o abraço suave que acalma. 🤗",
+        "Na ternura, o mundo encontra conforto. 🧸",
+        "Ternura é a música silenciosa do afeto. 🎼",
+      ],
+      impaciência: [
+        "Impaciência é o fogo que arde por mudança. 🔥",
+        "No desejo urgente, a alma pede transformação. ⏳",
+        "Impaciência é o grito do tempo apertado. ⏰",
+      ],
+      serenidade: [
+        "Serenidade é o lago tranquilo que reflete o céu. 🌊",
+        "Na serenidade, o coração descansa em paz. 🌿",
+        "Serenidade é a luz calma da noite estrelada. ✨",
+      ],
+      dúvida: [
+        "Dúvida é o caminho sinuoso para a clareza. 🌫️",
+        "Na dúvida, o espírito busca o encontro consigo. 🔍",
+        "Dúvida é a porta para a sabedoria. 🚪",
+      ],
+      surpresa: [
+        "Surpresa é o instante em que o mundo se revela novo. 🎁",
+        "No inesperado, a vida dança sua magia. ✨",
+        "Surpresa é o brilho fugaz da eternidade. 🌠",
+      ],
+      compaixao: [
+        "Compaixão é o abraço que entende sem julgar. 🤝",
+        "Na compaixão, a alma encontra sua humanidade. 🌍",
+        "Compaixão é a ponte que une corações. 🌉",
+      ],
+      alegria: [
+        "Alegria é a luz que irradia de dentro para fora. 🌞",
+        "Na alegria, o espírito se veste de cores vivas. 🎨",
+        "Alegria é o sorriso que nasce do nada. 😊",
+      ],
+      admiração: [
+        "Admiração é o espelho onde a alma se reconhece. 🪞",
+        "Na admiração, tudo se torna possível. ✨",
+        "Admirar é o presente do olhar atento. 🎁",
+      ],
+      compaixao: [
+        "Compaixão é o bálsamo que cura as feridas invisíveis. 🌸",
+        "No acolhimento, a dor se dissolve em amor. 💞",
+        "Compaixão é a luz que aquece as sombras. 🔥",
+      ],
+      liberdade: [
+        "Liberdade é o voo da alma sem correntes. 🕊️",
+        "Na liberdade, a verdade encontra sua voz. 🎤",
+        "Liberdade é o horizonte que nunca se distancia. 🌅",
+      ],
+      desejo: [
+        "Desejo é a chama que alimenta a busca. 🔥",
+        "No desejo, o mundo se desenha em possibilidades. 🌌",
+        "Desejo é o sonho que insiste em viver. 🌠",
+      ],
+      saudade: [
+        "Saudade é o eco doce do que ficou no tempo. ⏳",
+        "Na saudade, o coração faz morada nas lembranças. 🏡",
+        "Saudade é a presença invisível do passado. 👻",
+      ],
+      orgulho: [
+        "Orgulho é o espelho do valor reconhecido. 🏆",
+        "Na conquista, o orgulho floresce em silêncio. 🌸",
+        "Orgulho é a força que sustenta o ser. 💪",
+      ],
+      timidez: [
+        "Timidez é a flor que hesita antes de desabrochar. 🌸",
+        "Na timidez, a alma se protege com cuidado. 🛡️",
+        "Timidez é o convite ao olhar gentil. 👀",
+      ],
+      surpresa: [
+        "Surpresa é o presente escondido no instante. 🎁",
+        "No inesperado, a vida sorri sem avisar. 😊",
+        "Surpresa é a magia que colore o cotidiano. 🌈",
+      ],
+      compaixao: [
+        "Compaixão é o abraço silencioso da alma. 🤗",
+        "Na compaixão, encontramos nosso melhor reflexo. 🪞",
+        "Compaixão é a ponte entre corações distantes. 🌉",
+      ],
+      tranquilidade: [
+        "Tranquilidade é o lago onde o tempo repousa. 🌿",
+        "No silêncio tranquilo, a alma se encontra. 🌌",
+        "Tranquilidade é a música suave do existir. 🎶",
+      ],
+      excitação: [
+        "Excitação é a centelha que acende o fogo interno. ⚡",
+        "No pulso acelerado, a vida se manifesta intensa. 💓",
+        "Excitação é o prelúdio da criação. 🎨",
+      ],
+      empolgação: [
+        "Empolgação é o vento que impulsiona os sonhos. 🌬️",
+        "No entusiasmo, a alma se veste de cor. 🎭",
+        "Empolgação é a dança do espírito em festa. 💃",
+      ],
+      compaixao: [
+        "Compaixão é o coração que escuta com ternura. 💞",
+        "No gesto compassivo, a humanidade floresce. 🌺",
+        "Compaixão é a luz que guia o caminho do outro. 🕯️",
+      ],
+    };
+
+    function consultarOraculo() {
+      const entrada = document
+        .getElementById("entrada")
+        .value.toLowerCase()
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "");
+      const fraseArea = document.getElementById("fraseResultado");
+      if (baseFrases[entrada]) {
+        const frases = baseFrases[entrada];
+        const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
+        fraseArea.textContent = fraseAleatoria;
+      } else {
+        fraseArea.textContent =
+          "O oráculo ainda está em silêncio sobre essa sensação...";
+      }
+    }
+  </script>
+</body>
+</html>
